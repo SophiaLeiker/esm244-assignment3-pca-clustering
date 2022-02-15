@@ -1,0 +1,12 @@
+---
+title: 'Assignment 3: Task 1 - Principal Components Analysis'
+author: "Sophia Leiker"
+date: "2/15/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
