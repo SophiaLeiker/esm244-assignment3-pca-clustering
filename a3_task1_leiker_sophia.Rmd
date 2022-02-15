@@ -2,11 +2,34 @@
 title: 'Assignment 3: Task 1 - Principal Components Analysis'
 author: "Sophia Leiker"
 date: "2/15/2022"
-output: html_document
+output: 
+  html_document: 
+    toc: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=TRUE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(here)
+library(tidyverse)
+library(janitor)
+
 ```
 
+## 1. Introduction
+
+This report will carry out a Principal Components Analysis and will create a biplot for result interpretation. 
+The analysis will be performed on environmental and climatic variables at the country level. 
+
+
+**Data Source:** The data used  was compiled and provided by @zander_venter on Kaggle. “This data is all acquired through [Google Earth Engine](https://earthengine.google.com/) where publicly available remote sensing datasets have been uploaded...Most of the data is derived by calculating the mean for each country at a reduction scale of about 10km.” 
+
+
+```{r}
+# Reading in the data
+world <- read_csv(here("data", "world_env_vars.csv"))
+
+```
+
+***
 
