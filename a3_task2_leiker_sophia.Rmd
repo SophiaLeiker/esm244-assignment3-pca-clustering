@@ -1,0 +1,79 @@
+---
+title: 'Assignment 3: Task 2 - Agglomerative hierarchical clustering'
+author: "Sophia Leiker"
+date: "2/16/2022"
+output: 
+  html_document: 
+    toc: yes
+---
+
+```{r setup, include=TRUE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(NbClust)
+library(cluster)
+library(factoextra)
+library(dendextend)
+library(ggdendro)
+library(here)
+```
+
+## 1. Introduction
+
+This report will use hierarchical clustering by complete linkage to create a dendrogram showing multivariate clustering for water chemistry by site
+
+
+**Data Source:** SBC LTER: Stream chemistry in the Santa Barbara Coastal drainage area, ongoing since 2000
+Creators: Santa Barbara Coastal LTER, & Melack, John M
+Citation: Santa Barbara Coastal LTER and J. Melack. 2019. SBC LTER: Land: Stream chemistry in the Santa Barbara Coastal drainage area, ongoing since 2000 ver 16. [Environmental Data Initiative](https://doi.org/10.6073/pasta/67a558a24ceed9a0a5bf5e46ab841174). Meta data including metrics used for each variable and data collection methods can be found [here](https://portal.edirepository.org/nis/metadataviewer?packageid=knb-lter-sbc.6.16). This data package contains stream water chemistry measurements taken in Santa Barbara area watersheds, beginning in 2000. Stream water samples are collected weekly during non-storm flows in winter, and bi-weekly during summer.
+
+Some variables of interest include:
+
+- Total Dissolved Nitrogen uM
+- Total Dissolved Phosphorus uM
+- Total Particulate Carbon micromolesPerLiter
+- Total Particulate Nitrogen micromolesPerLiter
+- Total Suspended Solids (milligramPerLiter)
+
+
+```{r}
+# Reading in the data
+stream <- read_csv(here("data", "sbc_lter_registered_stream_chemistry.csv"))
+```
+
+
+***
+## 2. Data Wrangling
+
+```{r}
+stream_clean <- stream
+  
+```
+
+
+***
+
+## 3. Dendrogram
+
+
+
+
+
+```{r}
+# Reading in the data
+world <- read_csv(here("data", "world_env_vars.csv"))
+```
+
+
+***
+
+## 4. Data Citation
+
+Data source: Santa Barbara Coastal LTER and J. Melack. 2019. SBC LTER: Land: Stream chemistry in the Santa Barbara Coastal drainage area, ongoing since 2000 ver 16. [Environmental Data Initiative](https://doi.org/10.6073/pasta/67a558a24ceed9a0a5bf5e46ab841174)
+
+## END TASK
+
+
+
+
