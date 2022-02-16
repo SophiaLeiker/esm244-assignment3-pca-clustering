@@ -73,19 +73,63 @@ Creating a bi-plot
 autoplot(world_clean_pca,
          data = world_clean,
          loadings = TRUE, #to show the arrows
-         colour = "cropland_cover",
+         colour = "tree_canopy_cover",
          loadings.label = TRUE, #to add the labels to the arrows
          loadings.colour = "black",
          loadings.label.colour = "black",
          loadings.label.vjust = -0.5) +
-  theme_minimal()
-
+  theme_minimal() +
+  labs(title = "Biplot Illustrating Eigenvalues for Environmental and Climactic Variables", subtitle = "Data compiled and provided by @zander_venter from Google Earth Engine")
 ```
+
+**Figure 1**: Biplot illustrating the eigenvalues (loading variables) for principal component 1 and principal component 2. The blue color scale represents tree canopy cover with darnker shades of blue representing low levels of tree canopy cover and lighter shades of blue representing higher levels of tree canopy cover
+
 ***
 
-## X. Data Citation
+## 2. Screeplot
 
-Data source: 
+```{r}
+sd_vec <- world_clean_pca$sdev
+var_vec <- sd_vec^2 # Standard deviation is sqrt of variance!
+
+pc_names <- colnames(world_clean_pca$rotation) #PC names will create names
+
+#percent explained dataframe
+pct_expl_df <- data.frame(v = var_vec, #variance vector
+                          pct_v = var_vec / sum(var_vec), #percent variance (each value divided by the sum of variance vector)
+                          pc = fct_inorder(pc_names)) %>% #puts it in order of pc_names
+  mutate(pct_lbl = paste0(round(pct_v*100,1), "%"))
+
+ggplot(pct_expl_df, aes(x = pc, y = v)) + #mapping principal components on the x, and on y we are putting the variance (putting percent variance as a label on top)
+  geom_col() +
+  geom_text(aes(label = pct_lbl), vjust = 0, nudge_y = .002) + #adding the percent variance label on top (percent of total varience explained by each Principal component), moving the labels up just a bit 
+  labs(x = 'Principal component', y = 'Variance explained') +
+  labs(title = "Screeplot of Principal Components for Environmental and Climatic Variables", subtitle = "Data compiled and provided by @zander_venter from Google Earth Engine")
+
+```
+
+**Figure 2**: Screeplot illustrating the principal components contributions for environmental and climatic variables and the associated variance explained. 
+
+***
+
+## 3. Summary/Takeaways
+
+- As illustrated in the biplot, the variables `rain_wettestMonth`, `rain_mean_annual` and `tree_canopy_cover` all seem to be clustered with similar vector distances. This could indicate that these three variables are highly correlated with each other (positive correlation approaching 1)
+- `rain_mean_annual` looks to be 90 degrees from `cropland_cover` which would indicate that these two variables are not correlated (correlation of 0)
+- `wind` looks to be 90 degrees from `cropland_cover` which would indicate that these two variables are not correlated (correlation of 0)
+- `isothermality` and `cropland_cover` have an angle between them nearing 180 degrees and thus one can consider them negatively correlated 
+- `wind` and `tree_canopy_cover` have an angle between them nearing 180 degrees and thus one can consider them negatively correlated 
+- `cropland_cover` and `isothermaility` have the longest arrows which would indicate a larger variance
+- `wind` has the shortest arrow which could indicate a small variance in relation to the variables included 
+- There seems to be some clustering taking place in relation to tree canopy cover values. Higher values of tree canopy cover towards the direction of `rain_wettestMonth`, `rain_mean_annual` and `tree_canopy_cover`. This would make sense as regions with more rain can sustain more forests. On the right side of the biplot there is somewhat of a vertical cluster across the variables `temp_annual_range` and `cropland_cover`. This would also make sense as regions with higher cropland cover would naturally have lower levels of tree canopy cover. And regions with larger ranges of temperature would not be able to sustain a forest as well as those with smaller ranges. 
+- As visualized in the Screeplot, adding up the variance of the first three principal components explains around 80% of the variance. Due to this one could argue that PC1, PC2 and PC3 cover sufficient varience explained. 
+
+
+***
+
+## 4. Data Citation
+
+Data source: [Google Earth Engine](https://earthengine.google.com/) where publicly available remote sensing datasets have been uploaded. Most of the data is derived by calculating the mean for each country at a reduction scale of about 10km.” 
 
 ## END TASK
 
