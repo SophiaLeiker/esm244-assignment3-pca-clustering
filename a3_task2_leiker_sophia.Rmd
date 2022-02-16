@@ -17,6 +17,7 @@ library(factoextra)
 library(dendextend)
 library(ggdendro)
 library(here)
+library(janitor)
 ```
 
 ## 1. Introduction
@@ -39,42 +40,105 @@ Some variables of interest include:
 
 ```{r}
 # Reading in the data
-stream <- read_csv(here("data", "sbc_lter_registered_stream_chemistry.csv"))
+stream <- read_csv(here("data", "sbc_lter_registered_stream_chemistry.csv")) %>% 
+  clean_names()
 ```
 
 
 ***
 ## 2. Data Wrangling
 
-- Convreting -999 values to NA
-- 
+- Converting -999 values to NA
+- Grouping by site
+- Taking the mean of each of the observations and grouping them by site 
+
 ```{r}
 stream[stream==-999]<-NA
 
 stream_site <- stream %>% 
+  select(-timestamp_local) %>% 
   group_by(site_code) %>% 
-  summarize()
-  
+  summarize(
+    "Ammonium" = mean(nh4_u_m, na.rm = TRUE),
+    "Nitrate" = mean(no3_u_m, na.rm = TRUE),
+    "Phosphorous" = mean(po4_u_m, na.rm = TRUE),
+    "Dissolved nitrogen" = mean(tdn_u_m, na.rm = TRUE),
+    "Dissolved phosphorous" = mean(tdp_u_m, na.rm = TRUE),
+    "Particulate carbon" = mean(tpc_u_m, na.rm = TRUE),
+    "Particulate nitrogen" = mean(tpn_u_m, na.rm = TRUE),
+    "Particulate phosphorous" = mean(tpp_u_m, na.rm = TRUE),
+    "Suspended solids" = mean(tss_mgper_liter, na.rm = TRUE),
+    "Specific conductivity" = mean(spec_cond_u_spercm, na.rm = TRUE)
+  )
 ```
 
+```{r}
+stream_site_scaled <- stream_site %>% 
+  select(-site_code) %>% 
+  scale() 
+```
 
 ***
 
 ## 3. Dendrogram
 
-
-
-
+### Complete Linkage
 
 ```{r}
-# Reading in the data
-world <- read_csv(here("data", "world_env_vars.csv"))
+#Adding row names back in from the original dataset
+rownames(stream_site_scaled) <- stream_site$site_code
+
+#creating new dist dataframe
+stream_dist <- dist(stream_site_scaled, method = 'euclidean') 
+ 
+### Hierarchical clustering (complete linkage)
+#giving it the distance matrix
+stream_hc_complete <- hclust(stream_dist, method = "complete")
+ 
+### Plot it (base plot):
+plot(stream_hc_complete, cex = 0.6, hang = -1,
+     main = "Cluster Dendrogram Illustrating Water Chemistry by Site (Complete)",
+     sub = "Data from: Santa Barbara Coastal LTER and J. Melack. 2019",
+     xlab = "Stream Site",
+     ylab = "Height")
+
 ```
+
+### Single Linkage 
+
+```{r}
+
+### Hierarchical clustering (complete linkage)
+#giving it the distance matrix
+stream_hc_single <- hclust(stream_dist, method = "single")
+ 
+### Plot it (base plot):
+plot(stream_hc_single, cex = 0.6, hang = -1,
+     main = "Cluster Dendrogram Illustrating Water Chemistry by Site (Single)",
+     sub = "Data from: Santa Barbara Coastal LTER and J. Melack. 2019",
+     xlab = "Stream Site",
+     ylab = "Height")
+```
+
+```{r}
+# Convert to class dendrogram 
+dend_complete <- as.dendrogram(stream_hc_complete)
+dend_simple <- as.dendrogram(stream_hc_single)
+```
+
+Make a tanglegram:
+```{r}
+#make a tanglegram
+tanglegram(dend_complete, dend_simple)
+```
+
+***
+## 4. Summary
 
 
 ***
 
-## 4. Data Citation
+## 5. Data Citation
 
 Data source: Santa Barbara Coastal LTER and J. Melack. 2019. SBC LTER: Land: Stream chemistry in the Santa Barbara Coastal drainage area, ongoing since 2000 ver 16. [Environmental Data Initiative](https://doi.org/10.6073/pasta/67a558a24ceed9a0a5bf5e46ab841174)
 
