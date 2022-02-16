@@ -13,7 +13,14 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 library(here)
 library(tidyverse)
 library(janitor)
+library(ggfortify) # For PCA biplot
+library(patchwork)
+ 
 
+library(readxl)
+library(gghighlight) # For useful highlighting
+library(lubridate) # For easier dates & times
+library(plotly) # Interactive graphs
 ```
 
 ## 1. Introduction
@@ -28,8 +35,58 @@ The analysis will be performed on environmental and climatic variables at the co
 ```{r}
 # Reading in the data
 world <- read_csv(here("data", "world_env_vars.csv"))
-
 ```
 
 ***
+## 2. Principal Component Analysis (PCA)
+
+```{r}
+#selecting columns of interest for the PCA
+#dropping NAs
+
+world_clean <- world %>% 
+  select("elevation", "cropland_cover", "tree_canopy_cover", "isothermality", "rain_mean_annual", "rain_wettestMonth", "temp_annual_range", "wind", "cloudiness") %>% 
+  drop_na()
+
+#dropping NAs dropped the countries from 243 to 188
+```
+
+```{r}
+#creating a pca object type (for `prcomp` we can only give it numeric data! need to get rid of things that are characters)
+world_clean_pca <- world_clean %>%
+  scale() %>% #rescaling
+  prcomp() #doing the PCA
+```
+
+```{r}
+# See the loadings (weighting for each principal component)
+#world_clean_pca$rotation
+
+#to see the SD
+#world_clean_pca$sdev
+```
+
+
+Creating a bi-plot
+
+```{r}
+autoplot(world_clean_pca,
+         data = world_clean,
+         loadings = TRUE, #to show the arrows
+         colour = "cropland_cover",
+         loadings.label = TRUE, #to add the labels to the arrows
+         loadings.colour = "black",
+         loadings.label.colour = "black",
+         loadings.label.vjust = -0.5) +
+  theme_minimal()
+
+```
+***
+
+## X. Data Citation
+
+Data source: 
+
+## END TASK
+
 
