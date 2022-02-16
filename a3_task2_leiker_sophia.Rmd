@@ -46,8 +46,14 @@ stream <- read_csv(here("data", "sbc_lter_registered_stream_chemistry.csv"))
 ***
 ## 2. Data Wrangling
 
+- Convreting -999 values to NA
+- 
 ```{r}
-stream_clean <- stream
+stream[stream==-999]<-NA
+
+stream_site <- stream %>% 
+  group_by(site_code) %>% 
+  summarize()
   
 ```
 
