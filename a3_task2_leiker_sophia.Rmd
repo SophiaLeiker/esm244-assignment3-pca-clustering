@@ -31,11 +31,11 @@ Citation: Santa Barbara Coastal LTER and J. Melack. 2019. SBC LTER: Land: Stream
 
 Some variables of interest include:
 
-- Total Dissolved Nitrogen uM
-- Total Dissolved Phosphorus uM
-- Total Particulate Carbon micromolesPerLiter
-- Total Particulate Nitrogen micromolesPerLiter
-- Total Suspended Solids (milligramPerLiter)
+- `Total Dissolved Nitrogen uM`
+- `Total Dissolved Phosphorus uM`
+- `Total Particulate Carbon micromolesPerLiter`
+- `Total Particulate Nitrogen micromolesPerLiter`
+- `Total Suspended Solids (milligramPerLiter)`
 
 
 ```{r}
@@ -49,8 +49,9 @@ stream <- read_csv(here("data", "sbc_lter_registered_stream_chemistry.csv")) %>%
 ## 2. Data Wrangling
 
 - Converting -999 values to NA
-- Grouping by site
+- Grouping by `site_code`
 - Taking the mean of each of the observations and grouping them by site 
+- Dropping the sites with some NA values as that would not lead to an accurate clustering assessment. This is because if we include the sites with some (or many) variables listed with NAs and then cluster those with sites, we could be comparing and clustering sites with only a few variables listed, with those with all the variables listed. This potentially could lead to clusters which are not accurately reflecting the collected data. 
 
 ```{r}
 stream[stream==-999]<-NA
@@ -69,13 +70,17 @@ stream_site <- stream %>%
     "Particulate phosphorous" = mean(tpp_u_m, na.rm = TRUE),
     "Suspended solids" = mean(tss_mgper_liter, na.rm = TRUE),
     "Specific conductivity" = mean(spec_cond_u_spercm, na.rm = TRUE)
-  )
+  ) %>% 
+  filter(site_code %in% c("AB00", "AT07", "GV01", "HO00", "MC00", "MC06", "ON02", "RG01", "RS02" ))
 ```
+
+Scaling the data, removing the site code
 
 ```{r}
 stream_site_scaled <- stream_site %>% 
   select(-site_code) %>% 
-  scale() 
+  scale()
+  
 ```
 
 ***
@@ -131,14 +136,23 @@ dend_complete <- as.dendrogram(stream_hc_complete)
 dend_simple <- as.dendrogram(stream_hc_single)
 ```
 
-Make a tanglegram:
+Making a tanglegram:
 ```{r}
 #make a tanglegram
-tanglegram(dend_complete, dend_simple, main = "Tanglegram: How different linkage changes the clustering", sub = "DATA FROM", lab.cex = 1)
+tanglegram(dend_complete, dend_simple, main = "Tanglegram: Single vs Complete Linkage", lab.cex = 1, common_subtrees_color_branches = TRUE, lwd = 2.0, edge.lwd = 2.5)
 ```
+
+**Figure 3**: Tanglegram illustrating how single versus complete linkage changes the clustering output. The left side of this tanglegram illustrates clustering using complete linkage, the right illsutrates tanglegram using single linkage. Pink illistrates where there is overlap in clustering between both cluster methods. 
 
 ***
 ## 4. Summary
+- As seen in the tanglegram, there is similar clustering for the sites `MC00`, `AB00`, `MC06`, and `AT07` when using complete linkage and single linkage. 
+- `RG01` is closely tied to the the cluster containing `MC00`, `AB00`, `MC06`, and `AT07` in the complete linkage scenario, but not closely located to that grouping when using the single linkage method. This would be an important site to further look into the comparison of stream chemistry related to this group
+- The complete clustering method breaks the sites into two main groups, with `ON02` as an outlier.
+- The single clustering method has clusters that are integrating one or two new streams for each cluster step rather than separating them out into specific large groupings. This would reflect the idea that for single linkage performs well on non-globular data, does not perform well on noisy data while average and complete linkage is good for well defined spherical clusters
+- `ON02` is an outlier for both the complete and single linkage methods, which may indicate that this site has stream chemistry that is most different from all the other sites included in analysis
+- More analysis should be done to assess the stream chemistry of the streams that were dropped due to having NA values to see how the integration of these streams might change the breakdown of the clusters 
+
 
 
 ***

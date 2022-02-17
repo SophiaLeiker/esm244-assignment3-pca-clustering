@@ -79,6 +79,7 @@ autoplot(world_clean_pca,
          loadings.label.colour = "black",
          loadings.label.vjust = -0.5) +
   theme_minimal() +
+  scale_colour_gradient(low = "chocolate2", high = "forestgreen")
   labs(title = "Biplot Illustrating Eigenvalues for Environmental and Climactic Variables", subtitle = "Data compiled and provided by @zander_venter from Google Earth Engine")
 ```
 
