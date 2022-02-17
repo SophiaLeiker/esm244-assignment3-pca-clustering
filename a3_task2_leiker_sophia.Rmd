@@ -82,7 +82,7 @@ stream_site_scaled <- stream_site %>%
 
 ## 3. Dendrogram
 
-### Complete Linkage
+### A. Complete Linkage
 
 ```{r}
 #Adding row names back in from the original dataset
@@ -104,7 +104,9 @@ plot(stream_hc_complete, cex = 0.6, hang = -1,
 
 ```
 
-### Single Linkage 
+**Figure 1**: Cluster dendrogram for illustrating water chemistry by site using complete linkage (clusters are merged by the smallest *maximum* distance between two observations in distinct clusters).
+
+### B. Single Linkage 
 
 ```{r}
 
@@ -120,6 +122,9 @@ plot(stream_hc_single, cex = 0.6, hang = -1,
      ylab = "Height")
 ```
 
+**Figure 2**: Cluster dendrogram for illustrating water chemistry by site using single linkage (single linkage clusters are merged by the *smallest* distance between observations in separate clusters)
+
+
 ```{r}
 # Convert to class dendrogram 
 dend_complete <- as.dendrogram(stream_hc_complete)
@@ -129,7 +134,7 @@ dend_simple <- as.dendrogram(stream_hc_single)
 Make a tanglegram:
 ```{r}
 #make a tanglegram
-tanglegram(dend_complete, dend_simple)
+tanglegram(dend_complete, dend_simple, main = "Tanglegram: How different linkage changes the clustering", sub = "DATA FROM", lab.cex = 1)
 ```
 
 ***
