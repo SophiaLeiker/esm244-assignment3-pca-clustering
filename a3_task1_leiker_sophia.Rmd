@@ -40,15 +40,18 @@ world <- read_csv(here("data", "world_env_vars.csv"))
 ***
 ## 2. Principal Component Analysis (PCA)
 
+- Selecting variables of interest
+- Dropping countries with variables that contained NA values
+- Note: Dropping the NA values dropped the total number of countries included in th analysis from 243 to 188. This is done to carry out a more accurage PCA analysis as including countries with many variables with NAs might sway the final biplot (including a country with 3 of 9 vairables as well as a country with 9 of 9 variables would sway the outputs)
+
 ```{r}
 #selecting columns of interest for the PCA
 #dropping NAs
 
 world_clean <- world %>% 
   select("elevation", "cropland_cover", "tree_canopy_cover", "isothermality", "rain_mean_annual", "rain_wettestMonth", "temp_annual_range", "wind", "cloudiness") %>% 
-  drop_na()
-
-#dropping NAs dropped the countries from 243 to 188
+  drop_na() #%>% 
+  #rename( "Tree_Canopy_Cover_%" = tree_canopy_cover)
 ```
 
 ```{r}
@@ -56,6 +59,7 @@ world_clean <- world %>%
 world_clean_pca <- world_clean %>%
   scale() %>% #rescaling
   prcomp() #doing the PCA
+
 ```
 
 ```{r}
@@ -77,13 +81,13 @@ autoplot(world_clean_pca,
          loadings.label = TRUE, #to add the labels to the arrows
          loadings.colour = "black",
          loadings.label.colour = "black",
-         loadings.label.vjust = -0.5) +
+         loadings.label.vjust = -.5) +
   theme_minimal() +
   scale_colour_gradient(low = "chocolate2", high = "forestgreen")
   labs(title = "Biplot Illustrating Eigenvalues for Environmental and Climactic Variables", subtitle = "Data compiled and provided by @zander_venter from Google Earth Engine")
 ```
 
-**Figure 1**: Biplot illustrating the eigenvalues (loading variables) for principal component 1 and principal component 2. The blue color scale represents tree canopy cover with darnker shades of blue representing low levels of tree canopy cover and lighter shades of blue representing higher levels of tree canopy cover
+**Figure 1**: Biplot illustrating the eigenvalues (loading variables) for principal component 1 and principal component 2. The color scale represents tree canopy cover with orange drots representing points with low levels of tree canopy cover and forest green representing higher levels of tree canopy cover
 
 ***
 
