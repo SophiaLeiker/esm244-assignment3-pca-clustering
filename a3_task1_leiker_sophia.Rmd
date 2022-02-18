@@ -50,8 +50,8 @@ world <- read_csv(here("data", "world_env_vars.csv"))
 
 world_clean <- world %>% 
   select("elevation", "cropland_cover", "tree_canopy_cover", "isothermality", "rain_mean_annual", "rain_wettestMonth", "temp_annual_range", "wind", "cloudiness") %>% 
-  drop_na() #%>% 
-  #rename( "Tree_Canopy_Cover_%" = tree_canopy_cover)
+  drop_na() %>% 
+  rename(Tree_Canopy_Cover_Percent = tree_canopy_cover)
 ```
 
 ```{r}
@@ -77,7 +77,7 @@ Creating a bi-plot
 autoplot(world_clean_pca,
          data = world_clean,
          loadings = TRUE, #to show the arrows
-         colour = "tree_canopy_cover",
+         colour = "Tree_Canopy_Cover_Percent",
          loadings.label = TRUE, #to add the labels to the arrows
          loadings.colour = "black",
          loadings.label.colour = "black",
@@ -87,7 +87,7 @@ autoplot(world_clean_pca,
   labs(title = "Biplot Illustrating Eigenvalues for Environmental and Climactic Variables", subtitle = "Data compiled and provided by @zander_venter from Google Earth Engine")
 ```
 
-**Figure 1**: Biplot illustrating the eigenvalues (loading variables) for principal component 1 and principal component 2. The color scale represents tree canopy cover with orange drots representing points with low levels of tree canopy cover and forest green representing higher levels of tree canopy cover
+**Figure 1**: Biplot illustrating the eigenvalues (loading variables) for principal component 1 and principal component 2. The color scale represents tree canopy cover with orange dots representing points with low levels of tree canopy cover and forest green representing higher levels of tree canopy cover.
 
 ***
 
@@ -108,7 +108,7 @@ pct_expl_df <- data.frame(v = var_vec, #variance vector
 ggplot(pct_expl_df, aes(x = pc, y = v)) + #mapping principal components on the x, and on y we are putting the variance (putting percent variance as a label on top)
   geom_col() +
   geom_text(aes(label = pct_lbl), vjust = 0, nudge_y = .002) + #adding the percent variance label on top (percent of total varience explained by each Principal component), moving the labels up just a bit 
-  labs(x = 'Principal component', y = 'Variance explained') +
+  labs(x = 'Principal component', y = 'Variance Explained') +
   labs(title = "Screeplot of Principal Components for Environmental and Climatic Variables", subtitle = "Data compiled and provided by @zander_venter from Google Earth Engine")
 
 ```
@@ -136,6 +136,6 @@ ggplot(pct_expl_df, aes(x = pc, y = v)) + #mapping principal components on the x
 
 Data source: [Google Earth Engine](https://earthengine.google.com/) where publicly available remote sensing datasets have been uploaded. Most of the data is derived by calculating the mean for each country at a reduction scale of about 10km.” 
 
-## END TASK
+## END TASK 
 
 
